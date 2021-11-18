@@ -32,15 +32,13 @@ $available_languages["tlh"] = file_get_contents("./tlh.json");
 $available_languages["tr"] = file_get_contents("./tr.json");
 $available_languages["zh"] = file_get_contents("./zh.json");
 
+// convert all the simple js array into PHP key value array
+
 foreach ($available_languages as $key => $value) {
     $lang = $key;
     $words = json_decode($value, true);
     $words = array_flip($words);
-    // echo the array
 
     echo "$" . "available_languages['" . $lang . "'] = " . var_export($words, true) . ";\n";
-    // foreach ($words as $key => $value) {
-    //     echo $key . " => " . $value . ", <br>";
-    // }
     echo "<br><br>";
 }
