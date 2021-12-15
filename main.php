@@ -269,8 +269,10 @@ if (!function_exists("country_code_to_locale")) {
 $http_accept_language = $_SERVER["HTTP_ACCEPT_LANGUAGE"];
 
 // find the country code from cloudflare header
+if (!isset($_SERVER["HTTP_CF_IPCOUNTRY"])){
+    $_SERVER["HTTP_CF_IPCOUNTRY"] = "IN"; // for testing. won't run when deployed.
+}
 
-$_SERVER["HTTP_CF_IPCOUNTRY"] = isset($_SERVER["HTTP_CF_IPCOUNTRY"]) ? $_SERVER["HTTP_CF_IPCOUNTRY"] : "IN"; // for testing, setting the header as India
 if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
     $country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
 
