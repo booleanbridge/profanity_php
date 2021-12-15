@@ -1,8 +1,9 @@
 <?php
-if (!isset($bad_words)) {
-    $bad_words = array();
+if (!isset($bad_words_arabic)) {
+    $bad_words_arabic = array();
 }
-$bad_words["ar"] = array(
+
+$temp = array(
     "سكس",
     "طيز",
     "شرج",
@@ -42,3 +43,4 @@ $bad_words["ar"] = array(
     "قحبة",
     "لبوة"
 );
+$bad_words_arabic = array_merge($bad_words_arabic, $temp);

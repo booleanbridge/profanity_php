@@ -269,7 +269,8 @@ if (!function_exists("country_code_to_locale")) {
 $http_accept_language = $_SERVER["HTTP_ACCEPT_LANGUAGE"];
 
 // find the country code from cloudflare header
-$_SERVER["HTTP_CF_IPCOUNTRY"] = "IN";
+
+$_SERVER["HTTP_CF_IPCOUNTRY"] = isset($_SERVER["HTTP_CF_IPCOUNTRY"]) ? $_SERVER["HTTP_CF_IPCOUNTRY"] : "IN"; // for testing, setting the header as India
 if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
     $country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
 
@@ -284,6 +285,7 @@ if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
     }
 }
 
+// $http_accept_language = "ar, " . $http_accept_language; // TODO : remove this line
 $available_languages = array();
 
 // add all the available languages with bad word lists
@@ -320,31 +322,29 @@ $langs = prefered_language($available_languages, $http_accept_language);
 
 // get the json data for each language in langs
 $bad_words = array();
+$bad_words_arabic = array();
 foreach ($langs as $lang => $value) {
-    include("./languages/" . $lang . ".php");
+    include(__DIR__ . "/languages/" . $lang . ".php");
 }
 
 // function to check if the text contains bad words using the bad words array
 function is_profanity($text)
 {
-    global $bad_words;
-    $languages_with_values_only = ["ar", "fa"];
-    $text = strtolower($text);
+    global $bad_words, $bad_words_arabic;
+
+    $check_arabic = boolval(count($bad_words_arabic));
+
     // convert $text to array
     $text = explode(" ", $text);
     // check if the text contains bad words
     foreach ($text as $word) {
-        foreach ($bad_words as $key => $value) {
-            if (in_array($key, $languages_with_values_only)) {
-                // checks each value in the array linearly
-                if (in_array($word, $value)) {
-                    return true;
-                }
-            } else {
-                // checks if the key exists
-                if (array_key_exists($word, $value)) {
-                    return true;
-                }
+        $word = strtolower($word);
+        if (key_exists($word, $bad_words)) {
+            return true;
+        }
+        if ($check_arabic) {
+            if (in_array($word, $bad_words_arabic)) {
+                return true;
             }
         }
     }

@@ -1,9 +1,10 @@
 <?php
 // full array search required
-if (!isset($bad_words)) {
-    $bad_words = array();
+if (!isset($bad_words_arabic)) {
+    $bad_words_arabic = array();
 }
-$bad_words['fa'] = array(
+
+$temp = array(
     "آب کیر",
     "ارگاسم",
     "برهنه",
@@ -50,3 +51,4 @@ $bad_words['fa'] = array(
     "منی",
     "هرزه"
 );
+$bad_words_arabic = array_merge($bad_words_arabic, $temp);
