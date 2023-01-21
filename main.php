@@ -330,14 +330,19 @@ foreach ($langs as $lang => $value) {
 }
 
 // function to check if the text contains bad words using the bad words array
-function is_profanity($text)
+function is_profanity($text, $exploded = null)
 {
     global $bad_words, $bad_words_arabic;
 
     $check_arabic = boolval(count($bad_words_arabic));
 
     // convert $text to array
-    $text = explode(" ", $text);
+    if ($exploded == null) {
+        $text = explode(" ", $text);
+    } else {
+        $text = $exploded;
+    }
+
     // check if the text contains bad words
     foreach ($text as $word) {
         $word = strtolower($word);
