@@ -1,7 +1,7 @@
 <?php
 // full array search required
-if (!isset($bad_words_arabic)) {
-    $bad_words_arabic = array();
+if (!isset($badWordsArabic)) {
+    $badWordsArabic = array();
 }
 
 $temp = array(
@@ -51,4 +51,4 @@ $temp = array(
     "منی",
     "هرزه"
 );
-$bad_words_arabic = array_merge($bad_words_arabic, $temp);
+$badWordsArabic = array_merge($badWordsArabic, $temp);

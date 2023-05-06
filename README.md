@@ -1,6 +1,10 @@
 # Profanity PHP
 
+[![CodeFactor](https://www.codefactor.io/repository/github/friendshipking/profanity_php/badge)](https://www.codefactor.io/repository/github/friendshipking/profanity_php)
+
 Selfishly made for my own use. Open Sourcing it to recieve - `what an ugly code!` compliment every once in a while.
+
+Has some cool functions though.
 
 Uses [List of Dirty, Naughty, Obscene, and Otherwise Bad Words](https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words.git)
 
