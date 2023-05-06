@@ -350,9 +350,8 @@ function isProfanity(string &$text, array $detectedLanguages = [], array &$explo
 
     // convert $text to array
     if ($exploded == []) {
-        // remove emojis
-        $cleanText = preg_replace('/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}\x{1F900}-\x{1F9FF}\x{1F1E0}-\x{1F1FF}]/u', '', $text);
-        $cleanText = explode(" ", $cleanText);
+        // remove emojis, punctuations and digits and convert to array
+        $cleanText = explode(" ", preg_replace('/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}\x{1F900}-\x{1F9FF}\x{1F1E0}-\x{1F1FF}]|[[:punct:]]|[[:digit:]]/u', '', $text));
     } else {
         $cleanText = $exploded;
     }
@@ -379,15 +378,63 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
         $message = "hello";
         assert(isProfanity($message) == false);
         assert($message == "hello");
+
         $message = "tum ek number ke madharchod ho";
         assert(isProfanity($message) == true);
         assert($message == "tum ek number ke madharchod ho");
+
         $message = "tum ek randi ke madharchod ho";
         assert(isProfanity($message) == true);
         assert($message == "tum ek randi ke madharchod ho");
+
+        // Test empty message
+        $message = "";
+        assert(isProfanity($message) == false);
+        assert($message == "");
+
+        // Test message with only one profanity word
+        $message = "bastard";
+        assert(isProfanity($message) == true);
+        assert($message == "bastard");
+
+        // Test message with multiple profanity words
+        $message = "what the hell is wrong with you, you motherfucker?";
+        assert(isProfanity($message) == true);
+        assert($message == "what the hell is wrong with you, you motherfucker?");
+
+        // Test message with profanity word inside a non-profanity word
+        $message = "classy";
+        assert(isProfanity($message) == false);
+        assert($message == "classy");
+
+        // Test message with profanity word partially censored
+        $message = "you f***ing idiot";
+        assert(isProfanity($message) == false);
+        assert($message == "you f***ing idiot");
+
+        // Test message with profanity word fully censored
+        $message = "you ***********";
+        assert(isProfanity($message) == false);
+        assert($message == "you ***********");
+
+        // Test message with profanity word at the beginning
+        $message = "shit happens";
+        assert(isProfanity($message) == true);
+        assert($message == "shit happens");
+
+        // Test message with profanity word at the end
+        $message = "that's bullshit";
+        assert(isProfanity($message) == true);
+        assert($message == "that's bullshit");
+
+        // Test message with multiple sentences
+        $message = "you fucking asshole! I can't believe you did this to me.";
+        assert(isProfanity($message) == true);
+        assert($message == "you fucking asshole! I can't believe you did this to me.");
+
         echo "All tests passed" . PHP_EOL;
     } catch (\Throwable $th) {
         echo "Tests failed" . PHP_EOL;
-        echo $th->getMessage();
+        echo $th->
     }
 }
