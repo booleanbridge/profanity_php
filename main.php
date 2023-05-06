@@ -322,11 +322,11 @@ function addAdditionalLanguages(string &$languagesToCheck, array $additionalLang
 /**
  * Check if the text contains profanity
  * @param string $text the text to check
- * @param array $detectedLanguages the languages detected in the text (optional)
  * @param array $exploded the text exploded into an array (optional)
+ * @param array $detectedLanguages the languages detected in the text (optional)
  * @return bool true if the text contains profanity, false if not
  */
-function isProfanity(string &$text, array $detectedLanguages = [], array &$exploded = []): bool
+function isProfanity(string &$text,  array &$exploded = [], array $detectedLanguages = []): bool
 {
     global $availableLanguages;
 
@@ -371,6 +371,19 @@ function isProfanity(string &$text, array $detectedLanguages = [], array &$explo
     return false;
 }
 
+/**
+ * Backward compatibility for v1.0.2
+ * @param string $text the text to check
+ * @param array $exploded the text exploded into an array (optional)
+ * @return bool true if the text contains profanity, false if not
+ * @deprecated
+ * @see isProfanity
+ */
+
+function is_profanity(string &$text,  array &$exploded = []): bool
+{
+    return isProfanity($text, $exploded);
+}
 
 // RUN this only when the file is run directly and not when included
 if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
@@ -435,6 +448,6 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
         echo "All tests passed" . PHP_EOL;
     } catch (\Throwable $th) {
         echo "Tests failed" . PHP_EOL;
-        echo $th->
+        echo $th->getMessage();
     }
 }
