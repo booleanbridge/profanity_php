@@ -326,7 +326,7 @@ function addAdditionalLanguages(string &$languagesToCheck, array $additionalLang
  * @param array $detectedLanguages the languages detected in the text (optional)
  * @return bool true if the text contains profanity, false if not
  */
-function isProfanity(string &$text,  array &$exploded = [], array $detectedLanguages = []): bool
+function isProfanity(string &$text, array $detectedLanguages = [], array &$exploded = []): bool
 {
     global $availableLanguages;
 
