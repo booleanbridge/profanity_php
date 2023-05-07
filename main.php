@@ -291,7 +291,6 @@ function getHttpAcceptLanguage(): string
     // find the country code from cloudflare header
     if (!isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
         // for testing. won't run when deployed.
-        error_log("HTTP_CF_IPCOUNTRY not set, Setting to IN");
         $_SERVER["HTTP_CF_IPCOUNTRY"] = "IN";
     }
     if (isset($_SERVER["HTTP_CF_IPCOUNTRY"])) {
@@ -338,7 +337,6 @@ function isProfanity(string &$text, array $detectedLanguages = [], array &$explo
     } else {
         $langs = getSupportedLanguages($availableLanguages, "", $detectedLanguages);
     }
-
 
     // get the json data for each language in langs
     foreach ($langs as $lang) {
