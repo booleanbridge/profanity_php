@@ -1,21 +1,17 @@
 <?php
 
-/**
- * GLOBAL VARS
- */
-$availableLanguages = array("ar" => 1, "cs" => 1, "da" => 1, "de" => 1, "en" => 1, "eo" => 1, "es" => 1, "fa" => 1, "fi" => 1, "fil" => 1, "fr" => 1, "fr-CA-u-sd-caqc" => 1, "hi" => 1, "hi-Latn" => 1, "hu" => 1, "it" => 1, "ja" => 1, "kab" => 1, "ko" => 1, "nl" => 1, "no" => 1, "pl" => 1, "pt" => 1, "ru" => 1, "sv" => 1, "th" => 1, "tlh" => 1, "tr" => 1, "zh" => 1);
-
 
 /**
  * Returns the supported languages based on the input HTTP_ACCEPT_LANGUAGE header or similarly formatted string of language codes.
- * @param array $availableLanguages An array of available languages in the format array('en', 'en_US')
  * @param string $httpAcceptLanguage The HTTP_ACCEPT_LANGUAGE header
  * @param array $detectedLanguages An array of detected languages in the format array('en' , 'hi')
  * @return array of supported languages, formatted like array(en => 1), or empty Array if not found
  */
-function getSupportedLanguages(array &$availableLanguages, string $httpAcceptLanguage, array $detectedLanguages = []): array
+function getSupportedLanguages(string $httpAcceptLanguage, array $detectedLanguages = []): array
 {
     $langs = array();
+    $availableLanguages = array("ar" => 1, "cs" => 1, "da" => 1, "de" => 1, "en" => 1, "eo" => 1, "es" => 1, "fa" => 1, "fi" => 1, "fil" => 1, "fr" => 1, "fr-CA-u-sd-caqc" => 1, "hi" => 1, "hi-Latn" => 1, "hu" => 1, "it" => 1, "ja" => 1, "kab" => 1, "ko" => 1, "nl" => 1, "no" => 1, "pl" => 1, "pt" => 1, "ru" => 1, "sv" => 1, "th" => 1, "tlh" => 1, "tr" => 1, "zh" => 1);
+
     if (count($detectedLanguages) > 0) {
         foreach ($detectedLanguages as $detectedLanguage) {
             if (isset($availableLanguages[$detectedLanguage])) {
@@ -327,15 +323,13 @@ function addAdditionalLanguages(string &$languagesToCheck, array $additionalLang
  */
 function isProfanity(string &$text, array $detectedLanguages = [], array &$exploded = []): bool
 {
-    global $availableLanguages;
-
     $badWords = array();
     $badWordsArabic = array();
 
     if ($detectedLanguages === []) {
-        $langs = getSupportedLanguages($availableLanguages, getHttpAcceptLanguage());
+        $langs = getSupportedLanguages(getHttpAcceptLanguage());
     } else {
-        $langs = getSupportedLanguages($availableLanguages, "", $detectedLanguages);
+        $langs = getSupportedLanguages("", $detectedLanguages);
     }
 
     // get the json data for each language in langs
