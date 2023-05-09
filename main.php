@@ -1,40 +1,32 @@
 <?php
 
 // GLOBALS
-// HOLD two letter language codes like en, fr, hi etc
-$languages = array();
+// HOLD two letter language codes like en=>1, fr=>1, hi=>1 etc
 $supportedLanguages = array();
 
 /**
- * Returns the supported languages based on the input HTTP_ACCEPT_LANGUAGE header or similarly formatted string of language codes.
- * @param string $httpAcceptLanguage The HTTP_ACCEPT_LANGUAGE header
+ * Fills supportedLanguages global variable with languages supported by us based on what user may support
  * @param array $detectedLanguages An array of detected languages in the format array('en' , 'hi')
- * @return array of supported languages, formatted like array(en => 1), or empty Array if not found
  */
-function getSupportedLanguages(string $httpAcceptLanguage, array $detectedLanguages = []): array
+function getSupportedLanguages(array $detectedLanguages = []): void
 {
-    $langs = array();
-    $availableLanguages = array("ar" => 1, "cs" => 1, "da" => 1, "de" => 1, "en" => 1, "eo" => 1, "es" => 1, "fa" => 1, "fi" => 1, "fil" => 1, "fr" => 1, "fr-CA-u-sd-caqc" => 1, "hi" => 1, "hi-Latn" => 1, "hu" => 1, "it" => 1, "ja" => 1, "kab" => 1, "ko" => 1, "nl" => 1, "no" => 1, "pl" => 1, "pt" => 1, "ru" => 1, "sv" => 1, "th" => 1, "tlh" => 1, "tr" => 1, "zh" => 1);
+    global $supportedLanguages;
+    $availableLanguages = array("ar" => 1, "cs" => 1, "da" => 1, "de" => 1, "en" => 1, "eo" => 1, "es" => 1, "fa" => 1, "fi" => 1, "fil" => 1, "fr" => 1, "hi" => 1, "hu" => 1, "it" => 1, "ja" => 1, "kab" => 1, "ko" => 1, "nl" => 1, "no" => 1, "pl" => 1, "pt" => 1, "ru" => 1, "sv" => 1, "th" => 1, "tlh" => 1, "tr" => 1, "zh" => 1);
 
-    if (count($detectedLanguages) > 0) {
+    if (!empty($detectedLanguages)) {
         foreach ($detectedLanguages as $detectedLanguage) {
+            // handle cases like hi-Latn, en-GB etc and 3 letter codes like fil, tlh etc
+            if (strlen($detectedLanguage) > 2) {
+                $detectedLanguage = explode("-", $detectedLanguage)[0];
+            }
             if (isset($availableLanguages[$detectedLanguage])) {
-                $langs[] = $detectedLanguage;
+                $supportedLanguages[$detectedLanguage] = 1;
             }
         }
     } else {
-        preg_match_all('~([\w-]+)(?:[^,\d]+([\d.]+))?~', strtolower($httpAcceptLanguage), $matches, PREG_SET_ORDER);
-        foreach ($matches as $match) {
-            list($a, $b) = explode('-', $match[1]) + array('', '');
-
-            if (isset($availableLanguages[$match[1]])) {
-                $langs[] = $match[1];
-            } elseif (isset($availableLanguages[$a])) {
-                $langs[] = $a;
-            }
-        }
+        countryCodeToLanguage($availableLanguages);
+        getHttpAcceptLanguages($availableLanguages);
     }
-    return $langs;
 }
 
 /**
@@ -42,9 +34,9 @@ function getSupportedLanguages(string $httpAcceptLanguage, array $detectedLangua
  * @param $countryCode ISO 3166-2-alpha 2 country code
  * @return void
  */
-function countryCodeToLanguage(string $countryCode = ""): void
+function countryCodeToLanguage(array &$availableLanguages,   string $countryCode = ""): void
 {
-    global $languages;
+    global $supportedLanguages;
 
     // find the country code from cloudflare header only if $countryCode is empty
     if (empty($countryCode)) {
@@ -653,34 +645,30 @@ function countryCodeToLanguage(string $countryCode = ""): void
     );
 
     if (isset($countryCodeToLocale[$countryCode])) {
-        array_push($languages, ...$countryCodeToLocale[$countryCode]);
+        foreach ($countryCodeToLocale[$countryCode] as $locale) {
+            if (isset($availableLanguages[$locale])) {
+                $supportedLanguages[$locale] = 1;
+            }
+        }
     }
 }
 
 /**
- * Get HTTP_ACCEPT_LANGUAGE and add additional languages to it
- * @return string $httpAcceptLanguage
+ * Get HTTP_ACCEPT_LANGUAGE and extract the languages
  */
-
-function getHttpAcceptLanguage(): string
+function getHttpAcceptLanguages(array &$availableLanguages): void
 {
+    global $supportedLanguages;
     // Base languages
     $httpAcceptLanguage = isset($_SERVER["HTTP_ACCEPT_LANGUAGE"]) ? $_SERVER["HTTP_ACCEPT_LANGUAGE"] : '';
-    return $httpAcceptLanguage;
-}
-
-/**
- * adds additional languages to the $httpAcceptLanguage
- * @param $languagesToCheck string
- * @param $additionalLanguages array
- * @return void
- */
-function addAdditionalLanguages(string &$languagesToCheck, array $additionalLanguages): void
-{
-    foreach ($additionalLanguages as $language) {
-        if (strpos($languagesToCheck, $language) == false) {
-            // if not, add the laguage to the start of the $httpAcceptLanguage
-            $languagesToCheck = $language . ", " . $languagesToCheck;
+    if (empty($httpAcceptLanguage)) {
+        return;
+    }
+    preg_match_all('~([a-z]{2,3}(?:-[a-z]{3})?)(?:[^,\d]+([\d.]+))?~i', strtolower($httpAcceptLanguage), $matches, PREG_SET_ORDER);
+    foreach ($matches as $match) {
+        // add to languages if not exists
+        if (isset($availableLanguages[$match[1]])) {
+            $supportedLanguages[$match[1]] = 1;
         }
     }
 }
@@ -694,25 +682,22 @@ function addAdditionalLanguages(string &$languagesToCheck, array $additionalLang
  */
 function isProfanity(string &$text, array $detectedLanguages = [], array &$exploded = []): bool
 {
+    global $supportedLanguages;
     $badWords = array();
     $badWordsArabic = array();
 
-    if ($detectedLanguages === []) {
-        $langs = getSupportedLanguages(getHttpAcceptLanguage());
-    } else {
-        $langs = getSupportedLanguages("", $detectedLanguages);
-    }
+    getSupportedLanguages($detectedLanguages);
 
     // get the json data for each language in langs
-    foreach ($langs as $lang) {
+    foreach ($supportedLanguages as $lang => $value) {
         // only works when include or require is used
         include __DIR__ . "/languages/" . $lang . ".php";
     }
 
-    $check_arabic = $badWordsArabic !== [];
+    $check_arabic = empty($badWordsArabic);
 
     // convert $text to array
-    if ($exploded == []) {
+    if (empty($exploded)) {
         // remove emojis, punctuations and digits and convert to array
         $cleanText = explode(" ", preg_replace('/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}\x{1F900}-\x{1F9FF}\x{1F1E0}-\x{1F1FF}]|[[:punct:]]|[[:digit:]]/u', '', $text));
     } else {
@@ -722,7 +707,7 @@ function isProfanity(string &$text, array $detectedLanguages = [], array &$explo
     // check if the text contains bad words
     foreach ($cleanText as $word) {
         $word = strtolower($word);
-        if (key_exists($word, $badWords)) {
+        if (isset($badWords[$word]) && !empty($badWords[$word])) {
             return true;
         }
         if ($check_arabic) {
