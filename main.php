@@ -2,7 +2,10 @@
 
 // GLOBALS
 // HOLD two/three letter language codes like en=>1, fr=>1, hi=>1 etc
+// It only holds the languages that we support. It omits every other language.
 $supportedLanguages = array();
+// It holds all the possible languages for this user. It includes languages that we don't support.
+$languages = array();
 
 /**
  * Fills supportedLanguages global variable with languages supported by us based on what user may support
@@ -36,7 +39,7 @@ function getSupportedLanguages(array $detectedLanguages = []): void
  */
 function countryCodeToLanguage(array &$availableLanguages,   string $countryCode = ""): void
 {
-    global $supportedLanguages;
+    global $supportedLanguages, $languages;
 
     // find the country code from cloudflare header only if $countryCode is empty
     if (empty($countryCode)) {
@@ -646,6 +649,7 @@ function countryCodeToLanguage(array &$availableLanguages,   string $countryCode
 
     if (isset($countryCodeToLocale[$countryCode])) {
         foreach ($countryCodeToLocale[$countryCode] as $locale) {
+            $languages[] = $locale;
             if (isset($availableLanguages[$locale])) {
                 $supportedLanguages[$locale] = 1;
             }
@@ -658,7 +662,7 @@ function countryCodeToLanguage(array &$availableLanguages,   string $countryCode
  */
 function getHttpAcceptLanguages(array &$availableLanguages): void
 {
-    global $supportedLanguages;
+    global $supportedLanguages, $languages;
     // Base languages
     $httpAcceptLanguage = isset($_SERVER["HTTP_ACCEPT_LANGUAGE"]) ? $_SERVER["HTTP_ACCEPT_LANGUAGE"] : '';
     if (empty($httpAcceptLanguage)) {
@@ -667,6 +671,7 @@ function getHttpAcceptLanguages(array &$availableLanguages): void
     // Parse the accept language header and extracts the 2/3 letter language code
     preg_match_all('~([a-z]{2,3}(?:-[a-z]{3})?)(?:[^,\d]+([\d.]+))?~i', strtolower($httpAcceptLanguage), $matches, PREG_SET_ORDER);
     foreach ($matches as $match) {
+        $languages[] = $match[1];
         // add to languages if not exists
         if (isset($availableLanguages[$match[1]])) {
             $supportedLanguages[$match[1]] = 1;
