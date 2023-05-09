@@ -1,7 +1,7 @@
 <?php
 
 // GLOBALS
-// HOLD two letter language codes like en=>1, fr=>1, hi=>1 etc
+// HOLD two/three letter language codes like en=>1, fr=>1, hi=>1 etc
 $supportedLanguages = array();
 
 /**
@@ -664,6 +664,7 @@ function getHttpAcceptLanguages(array &$availableLanguages): void
     if (empty($httpAcceptLanguage)) {
         return;
     }
+    // Parse the accept language header and extracts the 2/3 letter language code
     preg_match_all('~([a-z]{2,3}(?:-[a-z]{3})?)(?:[^,\d]+([\d.]+))?~i', strtolower($httpAcceptLanguage), $matches, PREG_SET_ORDER);
     foreach ($matches as $match) {
         // add to languages if not exists
