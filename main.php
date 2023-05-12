@@ -10,12 +10,16 @@ $languages = array();
 /**
  * Fills supportedLanguages global variable with languages supported by us based on what user may support
  * @param array $detectedLanguages An array of detected languages in the format array('en' , 'hi')
+ * @param bool $all If true, then all languages are supported
  */
-function getSupportedLanguages(array $detectedLanguages = []): void
+function getSupportedLanguages(array $detectedLanguages = [], bool $all = false): void
 {
     global $supportedLanguages;
     $availableLanguages = array("ar" => 1, "cs" => 1, "da" => 1, "de" => 1, "en" => 1, "eo" => 1, "es" => 1, "fa" => 1, "fi" => 1, "fil" => 1, "fr" => 1, "hi" => 1, "hu" => 1, "it" => 1, "ja" => 1, "kab" => 1, "ko" => 1, "nl" => 1, "no" => 1, "pl" => 1, "pt" => 1, "ru" => 1, "sv" => 1, "th" => 1, "tlh" => 1, "tr" => 1, "zh" => 1);
-
+    if ($all) {
+        $supportedLanguages = $availableLanguages;
+        return;
+    }
     if (!empty($detectedLanguages)) {
         foreach ($detectedLanguages as $detectedLanguage) {
             // handle cases like hi-Latn, en-GB etc and 3 letter codes like fil, tlh etc
@@ -682,17 +686,18 @@ function getHttpAcceptLanguages(array &$availableLanguages): void
 /**
  * Check if the text contains profanity
  * @param string $text the text to check
- * @param array $exploded the text exploded into an array (optional)
  * @param array $detectedLanguages the languages detected in the text (optional)
+ * @param bool $all if true, check against all languages (optional)
+ * @param array $exploded the text exploded into an array (optional)
  * @return bool true if the text contains profanity, false if not
  */
-function isProfanity(string &$text, array $detectedLanguages = [], array &$exploded = []): bool
+function isProfanity(string &$text, array $detectedLanguages = [], bool $all = false, array &$exploded = []): bool
 {
     global $supportedLanguages;
     $badWords = array();
     $badWordsArabic = array();
 
-    getSupportedLanguages($detectedLanguages);
+    getSupportedLanguages($detectedLanguages, $all);
 
     // get the json data for each language in langs
     foreach ($supportedLanguages as $lang => $value) {
