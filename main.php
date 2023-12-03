@@ -804,6 +804,19 @@ if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
         assert(isProfanity($message) == true);
         assert($message == "you fucking asshole! I can't believe you did this to me.");
 
+
+        $message = "you shit! I can't believe you did this to me.";
+        assert(isProfanity($message) == true);
+        assert($message == "you shit! I can't believe you did this to me.");
+
+        $message = "you nigger! I can't believe you did this to me.";
+        assert(isProfanity($message) == true);
+        assert($message == "you nigger! I can't believe you did this to me.");
+
+        $message = "you nigga! I can't believe you did this to me.";
+        assert(isProfanity($message) == true);
+        assert($message == "you nigga! I can't believe you did this to me.");
+
         echo "All tests passed" . PHP_EOL;
     } catch (\Throwable $th) {
         echo "Tests failed" . PHP_EOL;
