@@ -2,7 +2,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/friendshipking/profanity_php/badge)](https://www.codefactor.io/repository/github/friendshipking/profanity_php)
 
-Selfishly made for my own use. Open Sourcing it to recieve - `what an ugly code!` compliment every once in a while.
+Selfishly made for my own use. Open Sourcing it to receive - `what an ugly code!` compliment every once in a while.
 
 Has some cool functions though.
 
