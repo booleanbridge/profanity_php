@@ -35,3 +35,6 @@ List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words
 
 
 .DS_Store
+
+# time in microseconds generated after running the test.php
+time.txt
