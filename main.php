@@ -99,15 +99,18 @@ function getHttpAcceptLanguages(): void
 /**
  * Check if a string contains profanity, it uses methods to make sure that it is fast.
  * 
- * @param string &$text The string to check.
+ * @param string &$text The string to check. Optional. If not provided, then $exploded must be provided.
  * @param array $detectedLanguages = [] The languages that were detected in the string. Optional.
- * @param array &$exploded = [] The exploded and cleaned string to remove punctuations and emojis. Optional.
+ * @param array &$exploded = [] The exploded and cleaned string to remove punctuations and emojis. Optional. If not provided, then $text must be provided.
  * @param int &explodedLength = 0 The length of the exploded string. Optional.
  * @param bool $all = false If true, it will check for all the languages available. Optional. 
  * @return bool true if the string contains profanity, false if not.
  */
-function isProfanity(&$text, $detectedLanguages = [], &$exploded = [], &$explodedLength = 0, $all = false): bool
+function isProfanity(&$text = "", $detectedLanguages = [], &$exploded = [], &$explodedLength = 0, $all = false): bool
 {
+    if (empty($text) && empty($exploded)) {
+        return false;
+    }
     global $supportedLanguages;
     $badWords = array(
         "badWords" => array(),
