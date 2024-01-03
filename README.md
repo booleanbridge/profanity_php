@@ -3,6 +3,9 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/friendshipking/profanity_php/badge?style=for-the-badge)](https://www.codefactor.io/repository/github/friendshipking/profanity_php)
 ![GitHub License](https://img.shields.io/github/license/friendshipking/profanity_php?style=for-the-badge&color=blue)
 ![GitHub Repo stars](https://img.shields.io/github/stars/friendshipking/profanity_php?style=for-the-badge&logo=github)
+![Cost](https://img.shields.io/badge/Cost-$8,783-238636?style=for-the-badge)
+![Effort](https://img.shields.io/badge/Effort-4.09%20months-blue?style=for-the-badge)
+![Lines](https://img.shields.io/badge/Lines-1956-blueviolet?style=for-the-badge)
 
 Welcome to Profanity PHP, the vibrant library designed to keep your text sparkling clean! 🌟 This lightweight and efficient tool is your go-to solution for detecting profanity in text using a comprehensive list of naughty words from [List of Dirty, Naughty, Obscene, and Otherwise Bad Words](https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words.git).
 
