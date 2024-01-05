@@ -102,6 +102,10 @@ $returnValue = false;
 
 $gibberishSentence = "Lorem ffug fiusagfiu siufguas uisfusaf ugisgfias gfsugf aius sfiasgfiuasgfi isfgiaufgas iufgaiusgfas asiufgsufga fssfsguf asfuisgf";
 $gibberishSentenceArray = explode(" ", $gibberishSentence);
+// Increase the length of the gibberish sentence
+for ($i = 0; $i < 10; $i++) {
+    $gibberishSentenceArray = array_merge($gibberishSentenceArray, $gibberishSentenceArray);
+}
 
 // logic to generate the True tests
 for ($i = 0; $i <= 50; $i++) {
@@ -198,3 +202,38 @@ foreach ($assertions as $assertion) {
         }
     }
 }
+
+$file = fopen("./time.txt", "r");
+
+if (!$file) {
+    echo "Error opening file";
+    exit;
+}
+
+$times = array();
+while (!feof($file)) {
+    $times[] = floatval(fgets($file));
+}
+fclose($file); // Close the file after reading
+
+// Calculate mean and median in ms
+$mean = array_sum($times) / count($times);
+sort($times);
+$median = $times[round((count($times) - 1) / 2)];
+// max time taken
+$max = max($times);
+// p95
+$p95 = $times[round(count($times) * 0.95)];
+// p99
+$p99 = $times[round(count($times) * 0.99)];
+
+// Reopen the file in append mode
+$file = fopen("./time.txt", "a");
+if (!$file) {
+    echo "Error opening file";
+    exit;
+}
+
+// Append it to the time.txt file
+fwrite($file, "\nMean: $mean\nMedian: $median\nMax: $max\np95: $p95\np99: $p99\n");
+fclose($file);
